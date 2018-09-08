@@ -9,14 +9,32 @@ import numpy as np
 
 import copy
 
-#from queue import Queue
+from queue import Queue
 
 def bfs(graph, places):
     """
     Returns the best solution which spans over all attractions indicated in 'places'
     """
-    #theSolution = Solution(places, graph)
+    solution = Solution(places, graph)
+    root = Node(solution)
+    buildTree(graph, places, node)
     
+    
+    
+def buildTree(graph, places, node):
+    newSolution = node.solution #Get parent solution
+    for i range(0, newSolution.not_visited.len - 1):
+        newSolution.add(i)
+        newNode
+        
+
+class Node:
+    def __init__(self, solution):
+        self.solution = solution
+        self.childs = []
+    
+    def addChild(self, Node):
+        self.childs.append(Node)
 
 class Solution:
     def __init__(self, places, graph):
@@ -43,4 +61,3 @@ def read_graph():
     return np.loadtxt("montreal", dtype='i', delimiter=',')
 
 graph = read_graph()
-
