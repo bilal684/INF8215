@@ -17,24 +17,34 @@ def bfs(graph, places):
     """
     solution = Solution(places, graph)
     root = Node(solution)
-    root.addChild(buildTree(root))
+    buildTree(root)
     print(Solution.childsCount)
     print(root)
     
 def buildTree(parent):
-    i = 0
-    newNode = Node()
-    while i < len(parent.solution.not_visited) - 1:
-        newSolution = Solution()
-        newSolution.g = parent.solution.g
-        newSolution.visited = copy.deepcopy(parent.solution.visited)
-        newSolution.not_visited = copy.deepcopy(parent.solution.not_visited)
-        newSolution.add(i)
-        newNode.solution = newSolution
-        parent.addChild(buildTree(newNode))
-        i+=1
-    return parent
-        
+    if(len(parent.solution.not_visited) > 0):
+        i = 0
+        while i < len(parent.solution.not_visited) - 1:
+            newNode = Node()
+            newSolution = Solution()
+            newSolution.g = parent.solution.g
+            newSolution.visited = copy.deepcopy(parent.solution.visited)
+            newSolution.not_visited = copy.deepcopy(parent.solution.not_visited)
+            newSolution.add(i)
+            newNode.solution = newSolution
+            parent.addChild(buildTree(newNode))
+            i+=1
+        if len(parent.solution.not_visited) == 1:
+            newNode = Node()
+            newSolution = Solution()
+            newSolution.g = parent.solution.g
+            newSolution.visited = copy.deepcopy(parent.solution.visited)
+            newSolution.not_visited = copy.deepcopy(parent.solution.not_visited)
+            newSolution.add(i)
+            newNode.solution = newSolution
+            parent.addChild(newNode)
+        return parent
+    return None
 
 class Node:
     def __init__(self, solution = None):
