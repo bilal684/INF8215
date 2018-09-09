@@ -23,24 +23,22 @@ def bfs(graph, places):
 def buildTree(parent):
     if(len(parent.solution.not_visited) > 0):
         i = 0
-        while i < len(parent.solution.not_visited) - 1:
-            newNode = Node()
+        while i < len(parent.solution.not_visited) - 1:  
             newSolution = copy.deepcopy(parent.solution)
             newSolution.add(i)
-            newNode.solution = newSolution
+            newNode = Node(newSolution)
             parent.addChild(buildTree(newNode))
             i+=1
         if len(parent.solution.not_visited) == 1:
-            newNode = Node()
             newSolution = copy.deepcopy(parent.solution)
             newSolution.add(i)
-            newNode.solution = newSolution
+            newNode = Node(newSolution)
             parent.addChild(newNode)
         return parent
     return None
 
 class Node:
-    def __init__(self, solution = None):
+    def __init__(self, solution):
         self.solution = solution
         self.childs = []
     
@@ -50,7 +48,7 @@ class Node:
 class Solution:
     childsCount = 0
        
-    def __init__(self, places=None, graph=None):
+    def __init__(self, places, graph):
         """
         places: a list containing the indices of attractions to visit
         p1 = places[0]
@@ -58,12 +56,8 @@ class Solution:
         """
         self.g = 0 # current cost
         self.graph = graph 
-        if(places is None):
-            self.visited = []
-            self.not_visited = []
-        else:
-            self.visited = [places[0]] # list of already visited attractions
-            self.not_visited = copy.deepcopy(places[1:])
+        self.visited = [places[0]] # list of already visited attractions
+        self.not_visited = copy.deepcopy(places[1:])
         #self.not_visited = copy.deepcopy(places[1:]) # list of attractions not yet visited
         
     def add(self, idx):
@@ -84,7 +78,7 @@ graph = read_graph()
  
 #test 1  --------------  OPT. SOL. = 27
 start_time = time.time()
-places=[0, 2, 7, 13, 11, 16, 15, 7, 9, 8, 4]
+places=[0, 5, 13, 16, 6, 9, 4]
 sol = bfs(graph=graph, places=places)
 print(Solution.childsCount)
 #print(sol.g)
