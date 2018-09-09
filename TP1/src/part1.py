@@ -19,27 +19,20 @@ def bfs(graph, places):
     root = Node(solution)
     buildTree(root)
     print(Solution.childsCount)
-    print(root)
     
 def buildTree(parent):
     if(len(parent.solution.not_visited) > 0):
         i = 0
         while i < len(parent.solution.not_visited) - 1:
             newNode = Node()
-            newSolution = Solution()
-            newSolution.g = parent.solution.g
-            newSolution.visited = copy.deepcopy(parent.solution.visited)
-            newSolution.not_visited = copy.deepcopy(parent.solution.not_visited)
+            newSolution = copy.deepcopy(parent.solution)
             newSolution.add(i)
             newNode.solution = newSolution
             parent.addChild(buildTree(newNode))
             i+=1
         if len(parent.solution.not_visited) == 1:
             newNode = Node()
-            newSolution = Solution()
-            newSolution.g = parent.solution.g
-            newSolution.visited = copy.deepcopy(parent.solution.visited)
-            newSolution.not_visited = copy.deepcopy(parent.solution.not_visited)
+            newSolution = copy.deepcopy(parent.solution)
             newSolution.add(i)
             newNode.solution = newSolution
             parent.addChild(newNode)
@@ -91,7 +84,7 @@ graph = read_graph()
  
 #test 1  --------------  OPT. SOL. = 27
 start_time = time.time()
-places=[0, 5, 13, 16, 6, 9, 4]
+places=[0, 2, 7, 13, 11, 16, 15, 7, 9, 8, 4]
 sol = bfs(graph=graph, places=places)
 print(Solution.childsCount)
 #print(sol.g)
