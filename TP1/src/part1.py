@@ -21,7 +21,6 @@ def bfs(graph, places):
     bestSolution = None
     while queue.qsize() > 0:
         sol = queue.get()
-        print(queue.qsize())
         if len(sol.not_visited) == 0:   
             if bestSolution is None:
                 bestSolution = sol
