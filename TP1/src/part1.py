@@ -9,41 +9,77 @@ import numpy as np
 import time
 import copy
 
-#from queue import Queue
+from queue import Queue
 
 def bfs(graph, places):
     """
     Returns the best solution which spans over all attractions indicated in 'places'
     """
-    solution = Solution(places, graph)
-    root = Node(solution)
-    buildTree(root)
-    print(Solution.childsCount)
-    
-def buildTree(parent):
-    if(len(parent.solution.not_visited) > 0):
+    solutionInitial = Solution(places, graph)
+    queue = Queue()
+    queue.put(solutionInitial)
+    bestSolution = None
+    while queue.qsize() > 0:
+        sol = queue.get()
+        print(queue.qsize())
+        if len(sol.not_visited) == 0:   
+            if bestSolution is None:
+                bestSolution = sol
+            elif bestSolution.g > sol.g:
+                bestSolution = sol
         i = 0
-        while i < len(parent.solution.not_visited) - 1:  
-            newSolution = copy.deepcopy(parent.solution)
+        while i < len(sol.not_visited) - 1:
+            newSolution = copy.deepcopy(sol)
             newSolution.add(i)
-            newNode = Node(newSolution)
-            parent.addChild(buildTree(newNode))
+            queue.put(newSolution)
             i+=1
-        if len(parent.solution.not_visited) == 1:
-            newSolution = copy.deepcopy(parent.solution)
-            newSolution.add(i)
-            newNode = Node(newSolution)
-            parent.addChild(newNode)
-        return parent
-    return None
+        if len(sol.not_visited) == 1:
+            newSolution = copy.deepcopy(sol)
+            newSolution.add(0)
+            queue.put(newSolution)
+    return bestSolution
+    #queue.append(solutionInitial)
+    #visited, queue = set(), 
+    #root = Node(solution)
+    #while
+    #buildTree(root) #builds the tree.
+    #print(Solution.childsCount)
+
+#def internalBfs(root):
+ #   frontier = [root]
+  #  while frontier:
+   #     currentNode = frontier.pop(0)
+    #    if node.state.isGoal():
+
+
+
+
+#def buildTree(parent):
+#    if(len(parent.solution.not_visited) > 0):
+#        i = 0
+#        while i < len(parent.solution.not_visited) - 1:  
+#            newSolution = copy.deepcopy(parent.solution)
+#            newSolution.add(i)
+#            newNode = Node(newSolution)
+#            parent.addChild(buildTree(newNode))
+#            i+=1
+#        if len(parent.solution.not_visited) == 1:
+#            newSolution = copy.deepcopy(parent.solution)
+#            newSolution.add(i)
+#            newNode = Node(newSolution)
+#            parent.addChild(newNode)
+#        return parent
+#    return None
 
 class Node:
     def __init__(self, solution):
         self.solution = solution
         self.childs = []
-    
+
     def addChild(self, Node):
         self.childs.append(Node)
+
+    #def isGoal():
         
 class Solution:
     childsCount = 0
@@ -66,7 +102,7 @@ class Solution:
         """
         self.g += graph[self.visited[-1], self.not_visited[idx]]
         self.visited.append(self.not_visited.pop(idx))
-        Solution.childsCount = Solution.childsCount + 1
+        Solution.childsCount = Solution.childsCount + 1 #TODO remove this
     
 
         
@@ -80,6 +116,5 @@ graph = read_graph()
 start_time = time.time()
 places=[0, 5, 13, 16, 6, 9, 4]
 sol = bfs(graph=graph, places=places)
-print(Solution.childsCount)
-#print(sol.g)
+print(sol.g)
 print("--- %s seconds ---" % (time.time() - start_time))
