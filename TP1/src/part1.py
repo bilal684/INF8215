@@ -2,7 +2,7 @@
 """
 Created on Sat Sep  8 10:43:22 2018
 
-@author: Bilal Itani
+@author: Bilal Itani, Mohammed
 """
 
 import numpy as np
@@ -37,38 +37,6 @@ def bfs(graph, places):
             newSolution.add(0)
             queue.put(newSolution)
     return bestSolution
-    #queue.append(solutionInitial)
-    #visited, queue = set(), 
-    #root = Node(solution)
-    #while
-    #buildTree(root) #builds the tree.
-    #print(Solution.childsCount)
-
-#def internalBfs(root):
- #   frontier = [root]
-  #  while frontier:
-   #     currentNode = frontier.pop(0)
-    #    if node.state.isGoal():
-
-
-
-
-#def buildTree(parent):
-#    if(len(parent.solution.not_visited) > 0):
-#        i = 0
-#        while i < len(parent.solution.not_visited) - 1:  
-#            newSolution = copy.deepcopy(parent.solution)
-#            newSolution.add(i)
-#            newNode = Node(newSolution)
-#            parent.addChild(buildTree(newNode))
-#            i+=1
-#        if len(parent.solution.not_visited) == 1:
-#            newSolution = copy.deepcopy(parent.solution)
-#            newSolution.add(i)
-#            newNode = Node(newSolution)
-#            parent.addChild(newNode)
-#        return parent
-#    return None
 
 class Node:
     def __init__(self, solution):
@@ -93,18 +61,13 @@ class Solution:
         self.graph = graph 
         self.visited = [places[0]] # list of already visited attractions
         self.not_visited = copy.deepcopy(places[1:])
-        #self.not_visited = copy.deepcopy(places[1:]) # list of attractions not yet visited
         
     def add(self, idx):
         """
         Adds the point in position idx of not_visited list to the solution
         """
         self.g += graph[self.visited[-1], self.not_visited[idx]]
-        self.visited.append(self.not_visited.pop(idx))
-        Solution.childsCount = Solution.childsCount + 1 #TODO remove this
-    
-
-        
+        self.visited.append(self.not_visited.pop(idx))        
 
 def read_graph():
     return np.loadtxt("montreal", dtype='i', delimiter=',')
