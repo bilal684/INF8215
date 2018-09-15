@@ -27,13 +27,13 @@ def fastest_path_estimation(sol):
         currentSolution = heapq.heappop(T)[1]
         i = 0
         #TODO POSER LA QUESTION AU CHARGER est-ce que je peux return ici directement ou je dois absolument m'assurer que le heap soit vide??
-        #if(len(currentSolution.not_visited) == 0):
-        #    return currentSolution.g
-        if len(currentSolution.not_visited)  == 0:
-            if bestSolution is None:
-                bestSolution = currentSolution
-            elif bestSolution.g > currentSolution.g:
-                bestSolution = currentSolution
+        if(len(currentSolution.not_visited) == 0):
+            return currentSolution.g
+        #if len(currentSolution.not_visited)  == 0:
+        #    if bestSolution is None:
+        #        bestSolution = currentSolution
+        #    elif bestSolution.g > currentSolution.g:
+        #        bestSolution = currentSolution
         while i < len(currentSolution.not_visited) - 1:
             newSolution = copy.deepcopy(currentSolution)
             newSolution.add(i)
@@ -48,9 +48,6 @@ def fastest_path_estimation(sol):
     
     #currentCost = sol.g
 
-
-
-    
 
 
 class Solution:
@@ -89,6 +86,7 @@ graph = read_graph()
  
 #test 1  --------------  OPT. SOL. = 27
 start_time = time.time()
+
 places=[0, 5, 13, 16, 6, 9, 4]
 sol = Solution(places, graph)
 fastestPath = fastest_path_estimation(sol)
