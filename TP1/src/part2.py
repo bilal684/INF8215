@@ -39,7 +39,7 @@ def fastest_path_estimation(sol):
     heapq.heappush(heap, currentVertex)
     while len(heap) > 0:
         currentVertex = heapq.heappop(heap)
-        if (currentVertex.id == pm): #We're done.
+        if currentVertex.id == pm: #We're done.
             break
         for i in range(0, len(graph[currentVertex.id])):
             if graph[currentVertex.id, i] > 0 and i not in Vertex.visitedVertexes:
@@ -60,8 +60,6 @@ def A_star(graph, places):
 
     # blank solution
     root = Solution(graph=graph, places=places)
-    root.h = fastest_path_estimation(root)
-
     # search tree T
     T = []
     heapq.heapify(T)
