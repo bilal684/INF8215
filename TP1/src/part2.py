@@ -42,46 +42,46 @@ def fastest_path_estimation(sol):
         if (currentVertex.id == pm): #We're done.
             break
         for i in range(0, len(graph[currentVertex.id])):
-            if(graph[currentVertex.id, i] > 0 and i not in Vertex.visitedVertexes):
+            if graph[currentVertex.id, i] > 0 and i not in Vertex.visitedVertexes:
                 adjacentVertex = Vertex()
                 adjacentVertex.id = i
                 newCost = currentVertex.currentCost + graph[currentVertex.id, i]
-                if(newCost < adjacentVertex.currentCost):
+                if newCost < adjacentVertex.currentCost:
                     adjacentVertex.currentCost = newCost
                     adjacentVertex.parent = currentVertex
                     heapq.heappush(heap, adjacentVertex)
         Vertex.visitedVertexes.append(currentVertex.id)
     return currentVertex.currentCost
-    #T = []
-    #heapq.heapify(T)
-    #root = copy.deepcopy(sol)
-    #root.g = 0
-    #heapq.heappush(T, (root.g, root))
-    #bestSolution = None
-    #while T:
-    #    currentSolution = heapq.heappop(T)[1]
-    #    i = 0
-    #    #TODO POSER LA QUESTION AU CHARGER est-ce que je peux return ici directement ou je dois absolument m'assurer que le heap soit vide??
-    #    if(len(currentSolution.not_visited) == 0):
-    #        return currentSolution.g
-    #    #if len(currentSolution.not_visited)  == 0:
-        #    if bestSolution is None:
-        #        bestSolution = currentSolution
-        #    elif bestSolution.g > currentSolution.g:
-        #        bestSolution = currentSolution
-    #    while i < len(currentSolution.not_visited) - 1:
-    #        newSolution = copy.deepcopy(currentSolution)
-    #        newSolution.add(i)
-    #        heapq.heappush(T, (newSolution.g, newSolution))
-    #        i+=1
-    #    if len(currentSolution.not_visited) == 1:
-    #        newSolution = copy.deepcopy(currentSolution)
-    #        newSolution.add(0)
-    #        heapq.heappush(T, (newSolution.g, newSolution))
-    #return bestSolution.g
 
-    
-    #currentCost = sol.g
+def A_star(graph, places):
+    """
+    Performs the A* algorithm
+    """
+
+    # blank solution
+    root = Solution(graph=graph, places=places)
+    root.h = fastest_path_estimation(root)
+
+    # search tree T
+    T = []
+    heapq.heapify(T)
+    heapq.heappush(T, root)
+    bestSol = None
+    while len(T) > 0:
+        bestSol = heapq.heappop(T)
+        print("Cost = " + str(bestSol.g + bestSol.h))
+        if len(bestSol.not_visited) == 0:
+            break
+        for i in range(0, len(bestSol.not_visited) - 1):
+            newSol = copy.deepcopy(bestSol)
+            newSol.add(i)
+            heapq.heappush(T, newSol)
+        if len(bestSol.not_visited) == 1:
+            newSol = copy.deepcopy(bestSol)
+            newSol.add(0)
+            heapq.heappush(T, newSol)
+    return bestSol
+
 
 
 
@@ -95,11 +95,11 @@ class Solution:
         pm = places[-1]
         """
         self.g = 0 # current cost
-        self.h = 0 # Cout restant vers la solution finale.
         self.graph = graph 
         self.visited = [places[0]] # list of already visited attractions
         self.not_visited = copy.deepcopy(places[1:])
-        #self.not_visited = copy.deepcopy(places[1:]) # list of attractions not yet visited
+        self.h = 0 # Estimated cost
+        # self.not_visited = copy.deepcopy(places[1:]) # list of attractions not yet visited
         
     def add(self, idx):
         """
@@ -107,9 +107,13 @@ class Solution:
         """
         self.g += graph[self.visited[-1], self.not_visited[idx]]
         self.visited.append(self.not_visited.pop(idx))
+        if len(self.not_visited) > 0:
+            self.h = fastest_path_estimation(self)
+        else:
+            self.h = 0
 
     def __lt__(self, other):
-        return ((self.g + self.h) <= (other.g + other.h))
+        return self.g + self.h < other.g + other.h
     
 
         
@@ -117,14 +121,12 @@ class Solution:
 def read_graph():
     return np.loadtxt("montreal", dtype='i', delimiter=',')
 
-graph = read_graph()
- 
-#test 1  --------------  OPT. SOL. = 27
-start_time = time.time()
 
-places=[0, 5, 13, 16, 6, 9, 4]
-sol = Solution(places, graph)
-fastestPath = fastest_path_estimation(sol)
-#sol = bfs(graph=graph, places=places)
-print(fastestPath)
+graph = read_graph()
+#test 3  --------------  OPT. SOL. = 26
+start_time = time.time()
+places=[0, 2, 7, 13, 11, 16, 15, 7, 9, 8, 4]
+astar_sol = A_star(graph=graph, places=places)
+print(astar_sol.g)
+print(astar_sol.visited)
 print("--- %s seconds ---" % (time.time() - start_time))
