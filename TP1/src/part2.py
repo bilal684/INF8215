@@ -2,48 +2,83 @@
 """
 Created on Sat Sep  8 10:43:22 2018
 
-@author: Bilal Itani & Mohammed Esseddik Ben Yahia
+@author: Bilal Itani, Mohammed Esseddik Ben Yahia, Xiangyi Zhang
 """
 
 import numpy as np
 import time
 import copy
 import heapq
+import sys
+
+class Vertex:
+    visitedVertexes = []
+    def __init__(self):
+        self.id = None
+        self.currentCost = sys.maxsize
+        self.parent = None
+
+    def __lt__(self, other):
+        return self.currentCost < other.currentCost
+
 
 def fastest_path_estimation(sol):
     """
     Returns the time spent on the fastest path between 
     the current vertex c and the ending vertex pm
     """
-    #c = sol.visited[-1]
-    #pm = sol.not_visited[-1]
-    T = []
-    heapq.heapify(T)
-    root = copy.deepcopy(sol)
-    root.g = 0
-    heapq.heappush(T, (root.g, root))
-    bestSolution = None
-    while T:
-        currentSolution = heapq.heappop(T)[1]
-        i = 0
-        #TODO POSER LA QUESTION AU CHARGER est-ce que je peux return ici directement ou je dois absolument m'assurer que le heap soit vide??
-        if(len(currentSolution.not_visited) == 0):
-            return currentSolution.g
-        #if len(currentSolution.not_visited)  == 0:
+    c = sol.visited[-1]
+    pm = sol.not_visited[-1]
+
+    graph = read_graph()
+    heap = []
+    heapq.heapify(heap)
+    currentVertex = Vertex()
+    currentVertex.id = c
+    currentVertex.currentCost = 0
+    heapq.heappush(heap, currentVertex)
+    while len(heap) > 0:
+        currentVertex = heapq.heappop(heap)
+        if (currentVertex.id == pm): #We're done.
+            break
+        for i in range(0, len(graph[currentVertex.id])):
+            if(graph[currentVertex.id, i] > 0 and i not in Vertex.visitedVertexes):
+                adjacentVertex = Vertex()
+                adjacentVertex.id = i
+                newCost = currentVertex.currentCost + graph[currentVertex.id, i]
+                if(newCost < adjacentVertex.currentCost):
+                    adjacentVertex.currentCost = newCost
+                    adjacentVertex.parent = currentVertex
+                    heapq.heappush(heap, adjacentVertex)
+        Vertex.visitedVertexes.append(currentVertex.id)
+    return currentVertex.currentCost
+    #T = []
+    #heapq.heapify(T)
+    #root = copy.deepcopy(sol)
+    #root.g = 0
+    #heapq.heappush(T, (root.g, root))
+    #bestSolution = None
+    #while T:
+    #    currentSolution = heapq.heappop(T)[1]
+    #    i = 0
+    #    #TODO POSER LA QUESTION AU CHARGER est-ce que je peux return ici directement ou je dois absolument m'assurer que le heap soit vide??
+    #    if(len(currentSolution.not_visited) == 0):
+    #        return currentSolution.g
+    #    #if len(currentSolution.not_visited)  == 0:
         #    if bestSolution is None:
         #        bestSolution = currentSolution
         #    elif bestSolution.g > currentSolution.g:
         #        bestSolution = currentSolution
-        while i < len(currentSolution.not_visited) - 1:
-            newSolution = copy.deepcopy(currentSolution)
-            newSolution.add(i)
-            heapq.heappush(T, (newSolution.g, newSolution))
-            i+=1
-        if len(currentSolution.not_visited) == 1:
-            newSolution = copy.deepcopy(currentSolution)
-            newSolution.add(0)
-            heapq.heappush(T, (newSolution.g, newSolution))
-    return bestSolution.g
+    #    while i < len(currentSolution.not_visited) - 1:
+    #        newSolution = copy.deepcopy(currentSolution)
+    #        newSolution.add(i)
+    #        heapq.heappush(T, (newSolution.g, newSolution))
+    #        i+=1
+    #    if len(currentSolution.not_visited) == 1:
+    #        newSolution = copy.deepcopy(currentSolution)
+    #        newSolution.add(0)
+    #        heapq.heappush(T, (newSolution.g, newSolution))
+    #return bestSolution.g
 
     
     #currentCost = sol.g
