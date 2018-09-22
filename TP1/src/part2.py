@@ -45,11 +45,9 @@ def fastest_path_estimation(sol):
             if graph[currentVertex.id, i] > 0 and i not in Vertex.visitedVertexes:
                 adjacentVertex = Vertex()
                 adjacentVertex.id = i
-                newCost = currentVertex.currentCost + graph[currentVertex.id, i]
-                if newCost < adjacentVertex.currentCost:
-                    adjacentVertex.currentCost = newCost
-                    adjacentVertex.parent = currentVertex
-                    heapq.heappush(heap, adjacentVertex)
+                adjacentVertex.currentCost = currentVertex.currentCost + graph[currentVertex.id, i]
+                adjacentVertex.parent = currentVertex
+                heapq.heappush(heap, adjacentVertex)
         Vertex.visitedVertexes.append(currentVertex.id)
     return currentVertex.currentCost
 
