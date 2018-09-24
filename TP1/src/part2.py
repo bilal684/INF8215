@@ -9,17 +9,6 @@ import numpy as np
 import time
 import copy
 import heapq
-import sys
-
-class Vertex:
-    visitedVertexes = []
-    def __init__(self):
-        self.id = None
-        self.currentCost = sys.maxsize
-        self.parent = None
-
-    def __lt__(self, other):
-        return self.currentCost < other.currentCost
 
 
 def fastest_path_estimation(sol):
@@ -27,29 +16,24 @@ def fastest_path_estimation(sol):
     Returns the time spent on the fastest path between 
     the current vertex c and the ending vertex pm
     """
-    c = sol.visited[-1]
     pm = sol.not_visited[-1]
 
-    graph = read_graph()
+    graph = sol.graph
     heap = []
+    currentSol = copy.deepcopy(sol)
+    currentSol.g = 0
     heapq.heapify(heap)
-    currentVertex = Vertex()
-    currentVertex.id = c
-    currentVertex.currentCost = 0
-    heapq.heappush(heap, currentVertex)
+    heapq.heappush(heap, currentSol)
     while len(heap) > 0:
-        currentVertex = heapq.heappop(heap)
-        if currentVertex.id == pm: #We're done.
+        currentSol = heapq.heappop(heap)
+        if currentSol.visited[-1] == pm: #We're done.
             break
-        for i in range(0, len(graph[currentVertex.id])):
-            if graph[currentVertex.id, i] > 0 and i not in Vertex.visitedVertexes:
-                adjacentVertex = Vertex()
-                adjacentVertex.id = i
-                adjacentVertex.currentCost = currentVertex.currentCost + graph[currentVertex.id, i]
-                adjacentVertex.parent = currentVertex
-                heapq.heappush(heap, adjacentVertex)
-        Vertex.visitedVertexes.append(currentVertex.id)
-    return currentVertex.currentCost
+        for i in range(0, len(currentSol.not_visited)):
+            if graph[currentSol.visited[-1], currentSol.not_visited[i]] > 0:
+                newSol = copy.deepcopy(currentSol)
+                newSol.addForDijkstra(i)
+                heapq.heappush(heap, newSol)
+    return currentSol.g
 
 def A_star(graph, places):
     """
@@ -65,7 +49,6 @@ def A_star(graph, places):
     bestSol = None
     while len(T) > 0:
         bestSol = heapq.heappop(T)
-        print("Cost = " + str(bestSol.g + bestSol.h))
         if len(bestSol.not_visited) == 0:
             break
         for i in range(0, len(bestSol.not_visited) - 1):
@@ -95,7 +78,6 @@ class Solution:
         self.visited = [places[0]] # list of already visited attractions
         self.not_visited = copy.deepcopy(places[1:])
         self.h = 0 # Estimated cost
-        # self.not_visited = copy.deepcopy(places[1:]) # list of attractions not yet visited
         
     def add(self, idx):
         """
@@ -108,7 +90,19 @@ class Solution:
         else:
             self.h = 0
 
+    def addForDijkstra(self, idx):
+        """
+        Adds the point in position idx of not_visited list to the solution
+        """
+        self.g += graph[self.visited[-1], self.not_visited[idx]]
+        self.visited.append(self.not_visited.pop(idx))
+
     def __lt__(self, other):
+        if self.g + self.h == other.g + other.h:
+            if len (self.visited) > len(other.visited):
+                return True
+            else:
+                return False
         return self.g + self.h < other.g + other.h
     
 
@@ -121,7 +115,7 @@ def read_graph():
 graph = read_graph()
 #test 3  --------------  OPT. SOL. = 26
 start_time = time.time()
-places=[0, 2, 7, 13, 11, 16, 15, 7, 9, 8, 4]
+places=[0, 2, 20, 3, 18, 12, 13, 5, 11, 16, 15, 4, 9, 14, 1]
 astar_sol = A_star(graph=graph, places=places)
 print(astar_sol.g)
 print(astar_sol.visited)
