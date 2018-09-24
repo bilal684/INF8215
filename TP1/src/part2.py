@@ -16,24 +16,26 @@ def fastest_path_estimation(sol):
     Returns the time spent on the fastest path between 
     the current vertex c and the ending vertex pm
     """
+    c = sol.visited[-1]
     pm = sol.not_visited[-1]
-
-    graph = sol.graph
     heap = []
-    currentSol = copy.deepcopy(sol)
-    currentSol.g = 0
     heapq.heapify(heap)
-    heapq.heappush(heap, currentSol)
+    for i in range(0, len(sol.not_visited)):
+        heapq.heappush(heap, (sol.graph[c, sol.not_visited[i]], sol.not_visited[i]))
+    lowestCostToPm = sol.graph[c, pm]
     while len(heap) > 0:
-        currentSol = heapq.heappop(heap)
-        if currentSol.visited[-1] == pm: #We're done.
+        firstTuple = heapq.heappop(heap)
+        if firstTuple[1] == pm:
+            lowestCostToPm = firstTuple[0]
             break
-        for i in range(0, len(currentSol.not_visited)):
-            if graph[currentSol.visited[-1], currentSol.not_visited[i]] > 0:
-                newSol = copy.deepcopy(currentSol)
-                newSol.addForDijkstra(i)
-                heapq.heappush(heap, newSol)
-    return currentSol.g
+        for i in range(0, len(heap)):
+            if firstTuple[0] + sol.graph[firstTuple[1], heap[i][1]] < heap[i][0]:
+                newTuple = (firstTuple[0] + sol.graph[firstTuple[1], heap[i][1]], heap[i][1])
+                heap.remove((heap[i][0], heap[i][1]))
+                heapq.heapify(heap)
+                heapq.heappush(heap,newTuple)
+
+    return lowestCostToPm
 
 def A_star(graph, places):
     """
