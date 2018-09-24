@@ -2,7 +2,7 @@
 """
 Created on Sat Sep  8 10:43:22 2018
 
-@author: Bilal Itani, Mohammed
+@author: Bilal Itani, Mohammed Esseddik Ben Yahia, Xiangyi Zhang
 """
 
 import numpy as np
