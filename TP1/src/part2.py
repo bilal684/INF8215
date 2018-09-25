@@ -92,13 +92,6 @@ class Solution:
         else:
             self.h = 0
 
-    def addForDijkstra(self, idx):
-        """
-        Adds the point in position idx of not_visited list to the solution
-        """
-        self.g += graph[self.visited[-1], self.not_visited[idx]]
-        self.visited.append(self.not_visited.pop(idx))
-
     def __lt__(self, other):
         if self.g + self.h == other.g + other.h:
             if len (self.visited) > len(other.visited):
