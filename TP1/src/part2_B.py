@@ -15,15 +15,42 @@ def find_cycle(pi, vertex, visited=None):
     """
     if visited is None:
         visited = []
-    for i in range(0, len(pi)):
-        t = pi[i]
-        if t[1] in visited:
-            return visited
-    
+    if vertex in visited:
+        visited += [vertex]
+        return visited
+    if pi[vertex] is not None:
+        visited += [vertex]
+        return find_cycle(pi, pi[vertex][1], visited)
+    else:
+        return []
 
-def MST(graph):
+def getCycle(theCycle):
+    if len(theCycle) > 0:
+        for i in range(len(theCycle) - 2, -1, -1):
+            if theCycle[i] == theCycle[-1]:
+                return theCycle[i:]
+
+
+def MST(not_visited, graph):
     """
     """
+    pi = constructPi(not_visited, graph)
+    #for v in range(0, len(graph)):
+
+    
+def constructPi(not_visited, graph):
+    pi = []
+    for i in range(0, len(graph)):
+        pi[i] = None
+    for i in range(0, len(not_visited)):
+        currentMin = (999999, 0)
+        for j in range(0, len(graph)):
+            if(graph[j][i] > 0):
+                if currentMin[0] > graph[j][i]:
+                    currentMin = (graph[j][i], j)
+        pi[i] = currentMin
+    return pi
+
 
 def minimum_spanning_arborescence(sol):
     """
@@ -109,11 +136,17 @@ def read_graph():
     return np.loadtxt("montreal", dtype='i', delimiter=',')
 
 
-graph = read_graph()
-#test 3  --------------  OPT. SOL. = 26
-start_time = time.time()
-places=[0, 2, 20, 3, 18, 12, 13, 5, 11, 16, 15, 4, 9, 14, 1]
-astar_sol = A_star(graph=graph, places=places)
-print(astar_sol.g)
-print(astar_sol.visited)
-print("--- %s seconds ---" % (time.time() - start_time))
+
+pi = [(0, 1), (0, 4), (0, 1), (0,2), (0,3), (0,3), (0,5)]
+P = find_cycle(pi, 6)
+print(getCycle(P))
+
+#1, 4, 3, 2
+#graph = read_graph()
+##test 3  --------------  OPT. SOL. = 26
+#start_time = time.time()
+#places=[0, 2, 20, 3, 18, 12, 13, 5, 11, 16, 15, 4, 9, 14, 1]
+##astar_sol = A_star(graph=graph, places=places)
+#print(astar_sol.g)
+#print(astar_sol.visited)
+#print("--- %s seconds ---" % (time.time() - start_time))
