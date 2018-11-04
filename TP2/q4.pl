@@ -15,58 +15,36 @@ undo.
 
 
 personne(X) :-
-  hypothesize(X),
+  hypothesize(X, _),
    write('I guess that the person is: '), 
    write(X), nl, undo.
 
-hypothesize(michael_jackson) :- michael_jackson, !. 
-hypothesize(mikhail_gorbachev) :- mikhail_gorbachev, !. 
-hypothesize(jennifer_lawrence) :- jennifer_lawrence, !. 
-hypothesize(hideo_kojima) :- hideo_kojima, !. 
-hypothesize(banksy) :- banksy, !. 
-hypothesize(lara_croft) :- lara_croft, !. 
-hypothesize(mario) :- mario, !. 
-hypothesize(j_k_rowling) :- j_k_rowling, !. 
-hypothesize(lady_gaga) :- lady_gaga, !. 
-hypothesize(quentin_tarantino) :- quentin_tarantino, !. 
-hypothesize(joseph_staline) :- joseph_staline, !. 
-hypothesize(dwight_d_eisenhower) :- dwight_d_eisenhower, !. 
-hypothesize(cleopatre) :- cleopatre, !. 
-hypothesize(victor_hugo) :- victor_hugo, !. 
-hypothesize(jesus) :- jesus, !. 
-hypothesize(ayrton_senna) :- ayrton_senna, !. 
-hypothesize(moise) :- moise, !. 
-hypothesize(fernando_alonso) :- fernando_alonso, !. 
-hypothesize(pape_francois) :- pape_francois, !. 
-hypothesize(james_bond) :- james_bond, !. 
-hypothesize(denzel_washington) :- denzel_washington, !. 
-hypothesize(richard_nixon) :- richard_nixon, !.
-hypothesize(unknown). /*Not found.*/ 
+hypothesize(X, Y) :- man(X), singer(X), country(Y), nationality(X, Y), X, !. %X = michael_jackson
+hypothesize(X, Y) :- woman(X), singer(X), country(Y), nationality(X, Y), X, !. % X = lady_gaga
+hypothesize(X, Y) :- man(X), president(X), country(Y), nationality(X, Y), X, !. % X=mikhail_gorbachev
+hypothesize(X, Y) :- woman(X), actor(X), country(Y), nationality(X, Y), X, !. % X= jennifer_lawrence
+hypothesize(X, Y) :- man(X), producer(X), country(Y), nationality(X, Y), X, !. % X= hideo_kojima
+hypothesize(X, Y) :- man(X), artist(X), country(Y), nationality(X, Y), X, !. % X= banksy
+hypothesize(X, Y) :- woman(X), videoGameCharacter(X), country(Y), nationality(X, Y), X, !. % X= lara_croft
+hypothesize(X, Y) :- man(X), videoGameCharacter(X), country(Y), nationality(X, Y), X, !. % X= mario
+hypothesize(X, Y) :- woman(X), writer(X), country(Y), nationality(X, Y), X, !. % X= j_k_rowling
+hypothesize(X, Y) :- man(X), director(X), country(Y), nationality(X, Y), X, !. % X= quentin_tarantino
+hypothesize(X, Y) :- man(X), president(X), country(Y), nationality(X, Y), X, !. % X= joseph_staline
+hypothesize(X, Y) :- man(X), president(X), country(Y), nationality(X, Y), thirtyFourthPresidentOfUSA(X), X, !. % X= dwight_d_eisenhower
+hypothesize(X, Y) :- woman(X), queen(X), country(Y), nationality(X, Y), X, !. % X= cleopatre
+hypothesize(X, Y) :- man(X), writer(X), country(Y), nationality(X, Y), X, !. % X= victor_hugo
+hypothesize(X, Y) :- man(X), prophet(X), country(Y), nationality(X, Y), X, !. % X= jesus
+hypothesize(X, Y) :- man(X), racer(X), country(Y), nationality(X, Y), X, !. % X= ayrton_senna
+hypothesize(X, Y) :- man(X), prophet(X), country(Y), nationality(X, Y), X, !. % X= moise
+hypothesize(X, Y) :- man(X), racer(X), country(Y), nationality(X, Y), X, !. % X= fernando_alonso
+hypothesize(X, Y) :- man(X), pope(X), country(Y), nationality(X, Y), X, !. % X= pape_francois
+hypothesize(X, Y) :- man(X), secretAgent(X), country(Y), nationality(X, Y), X, !. % X= james_bond
+hypothesize(X, Y) :- man(X), producer(X), country(Y), nationality(X, Y), X, !. % X= denzel_washington
+hypothesize(X, Y) :- man(X), president(X), country(Y), nationality(X, Y), thirtySeventhPresidentOfUSA(X), X, !. % X= richard_nixon
+hypothesize(unknown, _).
 
-%Rules%
-michael_jackson :- man, singer, usa.
-mikhail_gorbachev :- man, president, russia.
-jennifer_lawrence :- woman, actor, usa.
-hideo_kojima :- man, producer, japan.
-banksy :- man, artist, england.
-lara_croft :- woman, videoGameCharacter, usa.
-mario :- man, videoGameCharacter, italy.
-j_k_rowling :- woman, writer, england.
-lady_gaga :- woman, singer, usa.
-quentin_tarantino :- man, director, usa.
-joseph_staline :- man, president, sovietUnion.
-dwight_d_eisenhower :- man, president, usa, tirthyFourth.
-cleopatre :- woman, queen, egypt.
-victor_hugo :- man, writer, france.
-jesus :- man, prophet, palestine.
-ayrton_senna :- man, racer, brazil.
-moise :- man, prophet, egypt.
-fernando_alonso :- man, racer, spain.
-pape_francois :- man, pope, argentina.
-james_bond :- man, secretAgent, usa.
-denzel_washington :- man, producer, usa.
-richard_nixon :- man, president, usa, tirthySeventh.
 
+%%%%%%%%%%% FOR QUESTIONS TO THE USER %%%%%%%%%%%
 
 %%Sex%%
 man :- verify('a male'), !.
@@ -102,73 +80,96 @@ sovietUnion :- verify('from soviet union'), !.
 italy :- verify('from italy'), !.
 
 %Presidential number
-tirthyFourth :- verify('the 34th president of U.S.A'), !.
-tirthySeventh :- verify('the 37th president of U.S.A'), !.
+thirtyFourth :- verify('the 34th president of U.S.A'), !.
+thirtySeventh :- verify('the 37th president of U.S.A'), !.
 
-%Base de connaissances.
+michael_jackson :- man, singer, usa.
+lady_gaga :- woman, singer, usa.
+mikhail_gorbachev :- man, president, russia.
+jennifer_lawrence :- woman, actor, usa.
+hideo_kojima :- man, producer, japan.
+banksy :- man, artist, england.
+lara_croft :- woman, videoGameCharacter, usa.
+mario :- man, videoGameCharacter, italy.
+j_k_rowling :- woman, writer, england.
+quentin_tarantino :- man, director, usa.
+joseph_staline :- man, president, sovietUnion.
+dwight_d_eisenhower :- man, president, usa, thirtyFourth.
+cleopatre :- woman, queen, egypt.
+victor_hugo :- man, writer, france.
+jesus :- man, prophet, palestine.
+ayrton_senna :- man, racer, brazil.
+moise :- man, prophet, egypt.
+fernando_alonso :- man, racer, spain.
+pape_francois :- man, pope, argentina.
+james_bond :- man, secretAgent, usa.
+denzel_washington :- man, producer, usa.
+richard_nixon :- man, president, usa, thirtySeventh.
+
+%%%%%%%%%%% KNOWLEDGE BASE %%%%%%%%%%%
 %%sex%%
-%men
-/*
-fact_man(michael_jackson).
-fact_man(mikhail_gorbachev).
-fact_man(hideo_kojima).
-fact_man(banksy).
-fact_man(mario).
-fact_man(quentin_tarantino).
-fact_man(joseph_staline).
-fact_man(dwight_d_eisenhower).
-fact_man(victor_hugo).
-fact_man(jesus).
-fact_man(ayrton_senna).
-fact_man(moise).
-fact_man(pape_francois).
-fact_man(james_bond).
-fact_man(denzel_washington).
-fact_man(richard_nixon).
-fact_man(fernando_alonso).
-%women
-fact_woman(jennifer_lawrence).
-fact_woman(lara_croft).
-fact_woman(j_k_rowling).
-fact_woman(lady_gaga).
-fact_woman(cleopatre).
+man(michael_jackson).
+man(mikhail_gorbachev).
+man(hideo_kojima).
+man(banksy).
+man(mario).
+man(quentin_tarantino).
+man(joseph_staline).
+man(dwight_d_eisenhower).
+man(victor_hugo).
+man(jesus).
+man(ayrton_senna).
+man(moise).
+man(fernando_alonso).
+man(pape_francois).
+man(james_bond).
+man(denzel_washington).
+man(richard_nixon).
 
-%%Profession%%
-fact_singer(michael_jackson).
-fact_singer(lady_gaga).
+woman(lady_gaga).
+woman(jennifer_lawrence).
+woman(lara_croft).
+woman(j_k_rowling).
+woman(cleopatre).
 
-fact_president(mikhail_gorbachev).
-fact_president(joseph_staline).
-fact_president(dwight_d_eisenhower).
-fact_president(richard_nixon).
+%%job%%
+president(mikhail_gorbachev).
+president(joseph_staline).
+president(dwight_d_eisenhower).
+president(richard_nixon).
 
-fact_actor(jennifer_lawrence).
+actor(jennifer_lawrence).
 
-fact_secretAgent(james_bond).
+producer(producer).
+producer(denzel_washington).
 
-fact_producer(denzel_washington).
-fact_producer(hideo_kojima).
+artist(banksy).
 
-fact_director(quentin_tarantino).
+videoGameCharacter(lara_croft).
+videoGameCharacter(mario).
 
-fact_writer(j_k_rowling).
-fact_writer(victor_hugo).
+writer(victor_hugo).
+writer(j_k_rowling).
 
-fact_videoGame(lara_croft).
-fact_videoGame(mario).
+director(quentin_tarantino).
 
-fact_artist(banksy).
+queen(cleopatre).
 
-fact_queen(cleopatre).
+prophet(jesus).
+prophet(moise).
 
-fact_prophet(jesus).
-fact_prophet(moise).
+racer(ayrton_senna).
 
-fact_racer(ayrton_senna).
-fact_racer(fernando_alonso).
+racer(fernando_alonso).
 
-fact_pope(pape_francois).
-%%Country%%
+pope(pape_francois).
+
+secretAgent(james_bond).
+
+singer(lady_gaga).
+singer(michael_jackson).
+
+%%Nationality%%
 nationality(pape_francois, argentina).
 
 nationality(michael_jackson, usa).
@@ -218,6 +219,5 @@ country(sovietUnion).
 country(italy).
 
 %%Presidential term%%
-tirthySeventh(richard_nixon).
-tirthyFourth(dwight_d_eisenhower).
-*/
+thirtySeventhPresidentOfUSA(richard_nixon).
+thirtyFourthPresidentOfUSA(dwight_d_eisenhower).
