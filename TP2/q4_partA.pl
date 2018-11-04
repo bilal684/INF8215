@@ -1,6 +1,5 @@
-%Exercice 4 - TP2 - INF8215
+%Exercice 4 - Part A - TP2 - INF8215
 %Bilal Itani, Mohammed Essedik Ben-Yahia, Xiangyi Zhang.
-
 
 ask(Question) :- 
         write('Is the person '), 
@@ -24,27 +23,29 @@ personne(X) :-
    write(X), nl, undo.
 
 hypothesize(X, Y) :- man(X), singer(X), country(Y), nationality(X, Y), X, !. %X = michael_jackson
-hypothesize(X, Y) :- woman(X), singer(X), country(Y), nationality(X, Y), X, !. % X = lady_gaga
 hypothesize(X, Y) :- man(X), president(X), country(Y), nationality(X, Y), X, !. % X=mikhail_gorbachev
-hypothesize(X, Y) :- woman(X), actor(X), country(Y), nationality(X, Y), X, !. % X= jennifer_lawrence
-hypothesize(X, Y) :- man(X), producer(X), country(Y), nationality(X, Y), X, !. % X= hideo_kojima
-hypothesize(X, Y) :- man(X), artist(X), country(Y), nationality(X, Y), X, !. % X= banksy
-hypothesize(X, Y) :- woman(X), videoGameCharacter(X), country(Y), nationality(X, Y), X, !. % X= lara_croft
-hypothesize(X, Y) :- man(X), videoGameCharacter(X), country(Y), nationality(X, Y), X, !. % X= mario
-hypothesize(X, Y) :- woman(X), writer(X), country(Y), nationality(X, Y), X, !. % X= j_k_rowling
-hypothesize(X, Y) :- man(X), director(X), country(Y), nationality(X, Y), X, !. % X= quentin_tarantino
 hypothesize(X, Y) :- man(X), president(X), country(Y), nationality(X, Y), X, !. % X= joseph_staline
 hypothesize(X, Y) :- man(X), president(X), country(Y), nationality(X, Y), thirtyFourthPresidentOfUSA(X), X, !. % X= dwight_d_eisenhower
-hypothesize(X, Y) :- woman(X), queen(X), country(Y), nationality(X, Y), X, !. % X= cleopatre
+hypothesize(X, Y) :- man(X), president(X), country(Y), nationality(X, Y), thirtySeventhPresidentOfUSA(X), X, !. % X= richard_nixon
+hypothesize(X, Y) :- man(X), producer(X), country(Y), nationality(X, Y), X, !. % X= hideo_kojima
+hypothesize(X, Y) :- man(X), producer(X), country(Y), nationality(X, Y), X, !. % X= denzel_washington
+hypothesize(X, Y) :- man(X), artist(X), country(Y), nationality(X, Y), X, !. % X= banksy
+hypothesize(X, Y) :- man(X), videoGameCharacter(X), country(Y), nationality(X, Y), X, !. % X= mario
+hypothesize(X, Y) :- man(X), director(X), country(Y), nationality(X, Y), X, !. % X= quentin_tarantino
 hypothesize(X, Y) :- man(X), writer(X), country(Y), nationality(X, Y), X, !. % X= victor_hugo
 hypothesize(X, Y) :- man(X), prophet(X), country(Y), nationality(X, Y), X, !. % X= jesus
-hypothesize(X, Y) :- man(X), racer(X), country(Y), nationality(X, Y), X, !. % X= ayrton_senna
 hypothesize(X, Y) :- man(X), prophet(X), country(Y), nationality(X, Y), X, !. % X= moise
+hypothesize(X, Y) :- man(X), racer(X), country(Y), nationality(X, Y), X, !. % X= ayrton_senna
 hypothesize(X, Y) :- man(X), racer(X), country(Y), nationality(X, Y), X, !. % X= fernando_alonso
 hypothesize(X, Y) :- man(X), pope(X), country(Y), nationality(X, Y), X, !. % X= pape_francois
 hypothesize(X, Y) :- man(X), secretAgent(X), country(Y), nationality(X, Y), X, !. % X= james_bond
-hypothesize(X, Y) :- man(X), producer(X), country(Y), nationality(X, Y), X, !. % X= denzel_washington
-hypothesize(X, Y) :- man(X), president(X), country(Y), nationality(X, Y), thirtySeventhPresidentOfUSA(X), X, !. % X= richard_nixon
+
+hypothesize(X, Y) :- woman(X), singer(X), country(Y), nationality(X, Y), X, !. % X = lady_gaga
+hypothesize(X, Y) :- woman(X), actor(X), country(Y), nationality(X, Y), X, !. % X= jennifer_lawrence
+hypothesize(X, Y) :- woman(X), videoGameCharacter(X), country(Y), nationality(X, Y), X, !. % X= lara_croft
+hypothesize(X, Y) :- woman(X), writer(X), country(Y), nationality(X, Y), X, !. % X= j_k_rowling
+hypothesize(X, Y) :- woman(X), queen(X), country(Y), nationality(X, Y), X, !. % X= cleopatre
+
 hypothesize(unknown, _).
 
 
