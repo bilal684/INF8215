@@ -1,3 +1,7 @@
+%Exercice 4 - TP2 - INF8215
+%Bilal Itani, Mohammed Essedik Ben-Yahia, Xiangyi Zhang.
+
+
 ask(Question) :- 
         write('Is the person '), 
         write(Question), write('? '), 
@@ -170,6 +174,7 @@ singer(lady_gaga).
 singer(michael_jackson).
 
 %%Nationality%%
+%A has nationality Y when nationality(A, Y).
 nationality(pape_francois, argentina).
 
 nationality(michael_jackson, usa).
