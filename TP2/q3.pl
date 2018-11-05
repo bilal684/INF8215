@@ -1,5 +1,29 @@
 %Question3
 
+%A is corequisite of B when B is corequisite of A
+corequisite2(A,B) :- corequisite(B,A).
+
+corequisite2(A,B) :- corequisite(A, X), corequisite2(X, B).
+
+corequisite2(A,B) :- requisite(A, X), corequisite2(X, B).
+
+%corequisite2(A,B) :- 
+
+%A is a requisite of B when A is a prerequisite of B or A is a corequisite of B.
+requisite(A,B) :- prerequisite(A,B) ; corequisite(A,B).
+%A is also a requisite of B when A is a prerequisite of X and X is a requisite of B.
+requisite(A,B) :- prerequisite(A,X), requisite(X,B).
+%A is also a requisite of B if A is a corequisite of X and X is a requisite of B.
+requisite(A,B) :- corequisite(A,X), requisite(X,B).
+
+%To get all the requisites for a given course, we use the setof method which removes duplicates (http://www.swi-prolog.org/pldoc/man?predicate=setof/3)
+getAllRequisitesFor(A, List2) :- setof(X, (requisite(X,A); corequisite2(X,A)), List), delete(List, A, List2).
+
+
+
+
+%getAllRequisitesFor(A, List) :- setof(X, corequisite(X,A), List).
+
 %A is prerequisite of B when prequesite(A,B)
 prerequisite('INF1005c', 'INF1010').
 prerequisite('INF1005c', 'LOG1000').
@@ -17,14 +41,3 @@ corequisite('LOG2990', 'INF2705').
 corequisite('INF1600', 'INF1900').
 corequisite('LOG1000', 'INF1900').
 corequisite('INF2205', 'INF1900').
-
-
-%A is a requisite of B when A is a prerequisite of B or A is a corequisite of B.
-requisite(A,B) :- prerequisite(A,B) ; corequisite(A,B).
-%A is also a requisite of B when A is a prerequisite of X and X is a requisite of B.
-requisite(A,B) :- prerequisite(A,X), requisite(X,B).
-%A is also a requisite of B if A is a corequisite of X and X is a requisite of B.
-requisite(A,B) :- corequisite(A,X), requisite(X,B).
-
-%To get all the requisites for a given course, we use the setof method which removes duplicates (http://www.swi-prolog.org/pldoc/man?predicate=setof/3)
-getAllRequisitesFor(A, List) :- setof(X, requisite(X,A), List).
