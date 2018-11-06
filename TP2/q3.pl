@@ -28,10 +28,11 @@ f_prerequisite('INF1010', 'INF2010').
 f_prerequisite('INF1010', 'LOG2410').
 f_prerequisite('LOG1000', 'LOG2410').
 f_prerequisite('INF2010', 'INF2705').
+f_prerequisite('MTH1007', 'INF2705').
 
 %A is corequisite of B when corequisite(A,B)
 f_corequisite('LOG2810', 'INF2010').
-f_corequisite('MTH1007', 'INF2705').
+%f_corequisite('MTH1007', 'INF2705').
 f_corequisite('LOG2990', 'INF2705').
 f_corequisite('INF1600', 'INF1900').
 f_corequisite('LOG1000', 'INF1900').
