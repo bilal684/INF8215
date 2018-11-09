@@ -145,7 +145,7 @@ president(richard_nixon).
 
 actor(jennifer_lawrence).
 
-producer(producer).
+producer(hideo_kojima).
 producer(denzel_washington).
 
 artist(banksy).
