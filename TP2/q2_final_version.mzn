@@ -36,8 +36,7 @@ constraint forall(i in 1..nbTeams, j in 1..nbRounds-3) (atleast(1,[pv[i,opponent
 
 %redundant symmetry breaking constraints
 
-constraint forall(j in 1..(nbRounds-1)) (exists(i in 1..nbTeams)(opponent[i,j]<opponent[i,j+1]));
-
+constraint forall(i in 1..nbTeams) (exists(j in 1..(nbRounds-1))(opponent[i,j]<opponent[i,j+1]));
 % Solve problem
 
 solve satisfy;
