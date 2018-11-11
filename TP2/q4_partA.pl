@@ -1,6 +1,8 @@
 %Exercice 4 - Part A - TP2 - INF8215
 %Bilal Itani, Mohammed Essedik Ben-Yahia, Xiangyi Zhang.
 
+%Inspiré en partie de https://gist.github.com/adrianomelo/207c4da2f50744f04c9d (e.g pour la fonction ask).
+
 ask(Question) :- 
         write('Is the person '), 
         write(Question), write('? '), 
