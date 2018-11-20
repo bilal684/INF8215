@@ -71,8 +71,10 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 
         
 
-        # X_bias =         
-        # self.theta_  = 
+        tmp=np.ones((X.shape[0],1))
+        X_bias = np.concatenate((tmp,X),axis=0)
+        self.theta_=np.random.randint(-10,10,(self.nb_feature+1,self.nb_classes))
+
         
 
         for epoch in range( self.n_epochs):
@@ -115,8 +117,12 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             getattr(self, "theta_")
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
-        
-        pass
+        tmp=np.ones((X.shape[0],1))
+        X_bias = np.concatenate((tmp,X),axis=0)
+        z=X_bias*self.theta_
+        return self._softmax(z)
+
+
 
 
         """
@@ -139,7 +145,10 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             getattr(self, "theta_")
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
-        pass
+        predicted_prob=self.predict_proba(X,None)
+        return np.argmax(predicted_prob)+1
+
+
 
     
 
@@ -187,7 +196,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
     
     def _cost_function(self,probabilities, y ): 
-        pass
+
     
 
     
@@ -209,9 +218,11 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     
     
     def _one_hot(self,y):
-        pass
-
-
+        tmp=np.zeros((y.shape[0],self.nb_classes))
+        for i in y.shape[0]:
+            invoked_classc=int(y[i][0])
+            tmp[i][invoked_classc]=1
+        return tmp
     """
         In :
         Logits: (self.nb_features +1) * self.nb_classes
@@ -224,7 +235,10 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
     
     def _softmax(self,z):
-        pass
+        prob_vector=np.exp(z)
+        return prob_vector/np.sum(prob_vector)
+
+
     
 
     """
@@ -247,4 +261,6 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         
         pass
     
-    
+
+
+
