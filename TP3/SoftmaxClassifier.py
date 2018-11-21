@@ -79,14 +79,14 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 
         for epoch in range( self.n_epochs):
 
-            # logits = 
-            # probabilities = 
+            #logits =
+            probabilities =self.predict_proba(X)
             
             
-            # loss =                
-            # self.theta_ = 
+            loss =  self._cost_function(probabilities,y)
+            self.theta_ = self.theta_-self.lr*self._get_gradient(X,y,probabilities)
             
-            # self.losses_.append(loss)
+            self.losses_.append(loss)
 
             if self.early_stopping:
                 pass
@@ -119,7 +119,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             raise RuntimeError("You must train classifer before predicting data!")
         tmp=np.ones((X.shape[0],1))
         X_bias = np.concatenate((tmp,X),axis=0)
-        z=X_bias*self.theta_
+        z=np.dot(X_bias,self.theta_)
         return self._softmax(z)
 
 
@@ -195,7 +195,21 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         Probabilities
     """
     
-    def _cost_function(self,probabilities, y ): 
+    def _cost_function(self,probabilities, y ):
+        log_prob=np.exp(probabilities)
+        log_prob[np.where(log_prob==0)]=self.eps
+        log_prob[np.where(log_prob==1)]=1-self.eps
+        cost_sum=0
+        for i in range(y.shape[0]):
+            tmp_idx=int(y[i][0])
+            cost_sum+=log_prob[tmp_idx][i]
+            cost_sum=(-1/y.shape[0])*cost_sum
+        if self.regularization:
+            tmp_theta=np.power(self.theta_,2)
+            cost_sum+=np.sum(tmp_theta[:,1:self.nb_classes])
+        else:
+
+            return cost_sum
 
     
 
@@ -219,7 +233,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     
     def _one_hot(self,y):
         tmp=np.zeros((y.shape[0],self.nb_classes))
-        for i in y.shape[0]:
+        for i in range(y.shape[0]):
             invoked_classc=int(y[i][0])
             tmp[i][invoked_classc]=1
         return tmp
@@ -258,8 +272,19 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def _get_gradient(self,X,y, probas):
-        
-        pass
+        if self.regularization:
+            m=y.shape[0]
+            tmp=np.ones((X.shape[0],1))
+            X_bias = np.concatenate((tmp,X),axis=0)
+            gradients_costfunction=(1/m)*np.dot((np.transpose(X_bias)),probas-self._one_hot(y))
+            return gradients_costfunction
+        else:
+            m=y.shape[0]
+            tmp=np.ones((X.shape[0],1))
+            X_bias = np.concatenate((tmp,X),axis=0)
+            gradients_costfunction=(1/m)*np.dot((np.transpose(X_bias)),probas-self._one_hot(y))
+            return gradients_costfunction
+
     
 
 
