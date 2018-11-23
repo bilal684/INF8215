@@ -5,6 +5,7 @@ from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler
 from preprocessing import TransformationWrapper
+from sklearn.preprocessing import OneHotEncoder
 from preprocessing import LabelEncoderP
 import math
 
@@ -43,24 +44,57 @@ def convertAgeUponOutcomeToWeeks(text):
         elif timeFrame.lower() == "day" or timeFrame.lower() == "days":
             return float(number) * 1.0/7.0 #because there are 7 days per week
 
+def convertAnimalType(text):
+    if text == 'Dog':
+        return 0
+    else:
+        return 1
+
+
+def convertSexUponOutcome(text):
+    if text == "Neutered Male":
+        return 0
+    elif text == "Spayed Female":
+        return 1
+    elif text == "Intact Male":
+        return 2
+    elif text == "Intact Female":
+        return 3
+    else:
+        return 4
 pipeline_ageuponoutcome_changeToWeeks = Pipeline([
     ('mohammed', TransformationWrapper(transformation=convertAgeUponOutcomeToWeeks)),
     ('mohammed2', StandardScaler())
 ])
 
+pipeline_AnimalType_ChangeAnimalType = Pipeline(
+    [
+        ('mohammed3', TransformationWrapper(transformation=convertAnimalType))
+    ]
+)
+
+pipeline_SexuponOutcome_ChangeSexUponOutcome = Pipeline(
+    [
+        ('mohammed4', TransformationWrapper(transformation=convertSexUponOutcome)),
+        ('encode', OneHotEncoder(categories='auto', sparse=False))
+    ]
+)
+
 full_pipeline = ColumnTransformer(
     [
         ("bilal", pipeline_ageuponoutcome_changeToWeeks, "AgeuponOutcome"),
+        ("Xiangyi", pipeline_AnimalType_ChangeAnimalType, "AnimalType"),
+        ("Mohammed", pipeline_SexuponOutcome_ChangeSexUponOutcome, "SexuponOutcome")
     ], remainder='passthrough'
 )
 
-columns = ["AgeuponOutcome", "AnimalType", "SexuponOutcome", "Breed"]
+columns = ["AgeuponOutcome", "AnimalType", "Neutered Male", "Spayed Female", "Intact Male", "Intact Female", "Unknown", "Breed"]
 #columns = ["AgeuponOutcome"]
 X_train = pd.DataFrame(full_pipeline.fit_transform(X_train), columns= columns)
 
 
-t = X_train["AgeuponOutcome"].value_counts()/len(X_train)
+#t = X_train["SexuponOutcome"].value_counts()/len(X_train)
 
-print(t)
+#print(t)
 
 #print(convertAgeUponOutcomeToWeeks("10 months"))
