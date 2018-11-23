@@ -146,7 +146,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
         predicted_prob=self.predict_proba(X,None)
-        result=np.argmax(predicted_prob,axis=1)+1
+        result=np.argmax(predicted_prob,axis=1)
         return result.reshape(result.shape[0],1)
 
 
@@ -203,22 +203,21 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
     
     def _cost_function(self,probabilities, y ):
+        m=probabilities.shape[0]
+        probabilities[np.where(probabilities<self.eps)]=self.eps
+        probabilities[np.where(probabilities>1-self.eps)] =1- self.eps
         log_prob=np.exp(probabilities)
-        log_prob[np.where(log_prob<self.eps)]=self.eps
-        log_prob[np.where(log_prob>1-self.eps)]=1-self.eps
         cost_sum=0
+        y_one_hot=self._one_hot(y)
+        for i in range(m):
+            cost_sum+=np.dot(y_one_hot[i,:],probabilities[0,:].T)
         if self.regularization:
-            for i in range(y.shape[0]):
-                tmp_idx=int(y[i][0])
-                cost_sum+=log_prob[i][tmp_idx]
-                cost_sum=(-1/y.shape[0])*cost_sum
-                cost_sum+=self.alpha*np.sum(np.power(self.theta_,2))
+            cost_sum=(-1/m)*cost_sum
+            raw_number=self.theta_.shape[0]
+            cost_sum+=self.alpha*np.sum(np.power(self.theta_[1:raw_number,:],2))
+            return cost_sum
         else:
-            for i in range(y.shape[0]):
-                tmp_idx=int(y[i][0])
-                cost_sum+=log_prob[tmp_idx][i]
-                cost_sum=(-1/y.shape[0])*cost_sum
-        return cost_sum
+            return (-1/m)*cost_sum
 
     
 
@@ -287,8 +286,9 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             m=y.shape[0]
             tmp=np.ones((X.shape[0],1))
             X_bias = np.concatenate((tmp,X),axis=1)
-            tmp_subtraction=probas-self._one_hot(y)
-            gradients_costfunction=(1/m)*np.dot((np.transpose(X_bias)),tmp_subtraction)+2*self.alpha*self.theta_
+            tmp_labels=self._one_hot(y)
+            tmp_subtraction=probas-tmp_labels
+            gradients_costfunction=(1/m)*(np.dot((np.transpose(X_bias)),tmp_subtraction)+2*self.alpha*self.theta_)
         else:
             m=y.shape[0]
             tmp=np.ones((X.shape[0],1))
