@@ -93,8 +93,8 @@ columns = ["AgeuponOutcome", "AnimalType", "Neutered Male", "Spayed Female", "In
 X_train = pd.DataFrame(full_pipeline.fit_transform(X_train), columns= columns)
 
 
-#t = X_train["SexuponOutcome"].value_counts()/len(X_train)
+t = X_train["Breed"].value_counts()/len(X_train)
 
-#print(t)
+print(t)
 
 #print(convertAgeUponOutcomeToWeeks("10 months"))
