@@ -9,9 +9,11 @@ from sklearn.preprocessing import OneHotEncoder
 from preprocessing import LabelEncoderP
 import math
 
-PATH = "C:\\Users\\bitani\\Desktop\\INF8215\\TP3\\data\\"
-X_train = pd.read_csv(PATH + "train.csv")
-X_test = pd.read_csv(PATH + "test.csv")
+import collections,re
+
+PATH="E:\\polytechnique\\courses\\FAI\\TP3_Code\\TP\\TP3\\data\\"
+X_train = pd.read_csv(PATH+"train.csv")
+X_test = pd.read_csv(PATH+"test.csv")
 
 X_train = X_train.drop(columns = ["OutcomeSubtype","AnimalID"])
 X_test = X_test.drop(columns = ["ID"])
@@ -22,8 +24,8 @@ X_test.head()
 
 y_train.head()
 
-X_train1 = pd.read_csv("C:\\Users\\bitani\\Desktop\\INF8215\\TP3\\data\\train_preprocessed.csv")
-X_test1 = pd.read_csv("C:\\Users\\bitani\\Desktop\\INF8215\\TP3\\data\\test_preprocessed.csv")
+X_train1 = pd.read_csv("E:\\polytechnique\\courses\\FAI\\TP3_Code\\TP\\TP3\\data\\train_preprocessed.csv")
+X_test1 = pd.read_csv("E:\\polytechnique\\courses\\FAI\\TP3_Code\\TP\\TP3\\data\\test_preprocessed.csv")
 
 X_train1.head()
 
@@ -50,6 +52,12 @@ def convertAnimalType(text):
     else:
         return 1
 
+def convertBreed(text):
+    text = text.lower()
+    if "mix" in text or "/" in text:
+        return 1
+    else:
+        return 0
 
 def convertSexUponOutcome(text):
     if text == "Neutered Male":
@@ -80,21 +88,36 @@ pipeline_SexuponOutcome_ChangeSexUponOutcome = Pipeline(
     ]
 )
 
+pipeline_changeBreed = Pipeline(
+    [
+        ('mohammed5', TransformationWrapper(transformation=convertBreed))
+    ]
+)
+
 full_pipeline = ColumnTransformer(
     [
         ("bilal", pipeline_ageuponoutcome_changeToWeeks, "AgeuponOutcome"),
         ("Xiangyi", pipeline_AnimalType_ChangeAnimalType, "AnimalType"),
-        ("Mohammed", pipeline_SexuponOutcome_ChangeSexUponOutcome, "SexuponOutcome")
+        ("Mohammed", pipeline_SexuponOutcome_ChangeSexUponOutcome, "SexuponOutcome"),
+        ('breed', pipeline_changeBreed, "Breed")
     ], remainder='passthrough'
 )
 
-columns = ["AgeuponOutcome", "AnimalType", "Neutered Male", "Spayed Female", "Intact Male", "Intact Female", "Unknown", "Breed"]
+columns = ["AgeuponOutcome", "AnimalType", "Neutered Male", "Spayed Female", "Intact Male", "Intact Female", "Unknown", "Mix"]
 #columns = ["AgeuponOutcome"]
 X_train = pd.DataFrame(full_pipeline.fit_transform(X_train), columns= columns)
+X_test = pd.DataFrame(full_pipeline.transform(X_test), columns= columns)
 
+X_train_all = pd.concat([X_train, X_train1], axis=1)
+X_test_all = pd.concat([X_test, X_test1], axis=1)
+print("hello")
 
-t = X_train["Breed"].value_counts()/len(X_train)
+#X_train['Breed']
 
-print(t)
+#b = collections.Counter([y for x in X_train["Breed"].values.flatten() for y in x.split()])
+
+#t = X_train["Breed"].value_counts()/len(X_train)
+
+#print(b)
 
 #print(convertAgeUponOutcomeToWeeks("10 months"))
