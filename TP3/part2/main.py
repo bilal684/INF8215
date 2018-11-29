@@ -6,6 +6,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler
 from preprocessing import TransformationWrapper
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import LabelEncoder
+
 from preprocessing import LabelEncoderP
 import math
 
@@ -77,7 +79,7 @@ pipeline_ageuponoutcome_changeToWeeks = Pipeline([
 
 pipeline_AnimalType_ChangeAnimalType = Pipeline(
     [
-        ('mohammed3', TransformationWrapper(transformation=convertAnimalType))
+       ('mohammed3', TransformationWrapper(transformation=convertAnimalType))
     ]
 )
 
@@ -110,14 +112,56 @@ X_test = pd.DataFrame(full_pipeline.transform(X_test), columns= columns)
 
 X_train_all = pd.concat([X_train, X_train1], axis=1)
 X_test_all = pd.concat([X_test, X_test1], axis=1)
-print("hello")
 
-#X_train['Breed']
 
-#b = collections.Counter([y for x in X_train["Breed"].values.flatten() for y in x.split()])
 
-#t = X_train["Breed"].value_counts()/len(X_train)
+target_label = LabelEncoder()
+y_train_label = target_label.fit_transform(y_train)
 
-#print(b)
 
-#print(convertAgeUponOutcomeToWeeks("10 months"))
+# cross-validation
+from sklearn.model_selection import KFold,StratifiedKFold,train_test_split
+from Draw_Charts import Draw_Charts
+from SoftmaxClassifier import SoftmaxClassifier
+from sklearn.metrics import precision_recall_fscore_support
+import matplotlib.pyplot as plt
+Draw_Charts(y_train_label,"Original Ratio")
+sfolder = StratifiedKFold(n_splits=10,random_state=0,shuffle=False)
+y_train_label=y_train_label.reshape((y_train_label.shape[0],1))
+X_train_all=X_train_all.values
+scores_list=[]
+#random sampling
+X_train, X_test, y_train, y_test = train_test_split( X_train_all, y_train_label, test_size=0.1, random_state=42)
+Draw_Charts(y_test,"Random Sampling")
+for train_index, test_index in sfolder.split(X_train_all, y_train_label):
+    print("TRAIN:", train_index, "TEST:", test_index)
+    X_cross_train=X_train_all[train_index]
+    y_cross_train=y_train_label[train_index]
+    X_cross_test=X_train_all[test_index]
+    y_cross_test=y_train_label[test_index]
+    Draw_Charts(y_cross_test,"StratifiedKFold")
+    cl = SoftmaxClassifier()
+    train_p=cl.fit_predict(X_cross_train,y_cross_train)
+    scores = cl.score(X_cross_test,y_cross_test)
+    scores_list.append(scores)
+    print (scores)
+  #  print("train : "+ str(precision_recall_fscore_support(y_cross_train, train_p,average = "macro")))
+   # print("test : "+ str(precision_recall_fscore_support(y_cross_test, test_p,average = "macro")))
+    plt.plot(cl.losses_)
+    plt.show()
+    print("hello")
+plt.plot(scores_list)
+
+
+
+
+
+
+
+
+# display precision, recall and f1-score on train/test set
+
+
+
+
+
