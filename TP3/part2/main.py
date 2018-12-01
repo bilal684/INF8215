@@ -132,14 +132,14 @@ X_train_all=X_train_all.values
 scores_list=[]
 #random sampling
 X_train, X_test, y_train, y_test = train_test_split( X_train_all, y_train_label, test_size=0.1, random_state=42)
-Draw_Charts(y_test,"Random Sampling")
+#Draw_Charts(y_test,"Random Sampling")
 for train_index, test_index in sfolder.split(X_train_all, y_train_label):
     print("TRAIN:", train_index, "TEST:", test_index)
     X_cross_train=X_train_all[train_index]
     y_cross_train=y_train_label[train_index]
     X_cross_test=X_train_all[test_index]
     y_cross_test=y_train_label[test_index]
-    Draw_Charts(y_cross_test,"StratifiedKFold")
+#    Draw_Charts(y_cross_test,"StratifiedKFold")
     cl = SoftmaxClassifier()
     train_p=cl.fit_predict(X_cross_train,y_cross_train)
     scores = cl.score(X_cross_test,y_cross_test)

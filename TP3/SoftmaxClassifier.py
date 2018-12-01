@@ -214,7 +214,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         if self.regularization:
             cost_sum=(-1/m)*cost_sum
             raw_number=self.theta_.shape[0]
-            cost_sum+=self.alpha*np.sum(np.power(self.theta_[1:raw_number,:],2))
+            cost_sum+=(1/m)*self.alpha*np.sum(np.power(self.theta_[1:raw_number,:],2))
             return cost_sum
         else:
             return (-1/m)*cost_sum
@@ -288,7 +288,8 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             X_bias = np.concatenate((tmp,X),axis=1)
             tmp_labels=self._one_hot(y)
             tmp_subtraction=probas-tmp_labels
-            gradients_costfunction=(1/m)*(np.dot((np.transpose(X_bias)),tmp_subtraction)+2*self.alpha*self.theta_)
+            gradients_costfunction=(1/m)*(np.dot((np.transpose(X_bias)),tmp_subtraction))
+            gradients_costfunction[1:,:]+=2*self.alpha*self.theta_[1:,:]/m
         else:
             m=y.shape[0]
             tmp=np.ones((X.shape[0],1))
