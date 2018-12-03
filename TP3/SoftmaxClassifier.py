@@ -5,7 +5,7 @@ import numpy as np
 class SoftmaxClassifier(BaseEstimator, ClassifierMixin):  
     """A softmax classifier"""
 
-    def __init__(self, lr = 0.1, alpha = 100, n_epochs = 1000, eps = 1.0e-5,threshold = 1.0e-10 , regularization = True, early_stopping = True):
+    def __init__(self, lr = 0.1, alpha = 100, n_epochs = 1000, eps = 1.0e-5,threshold = 1.0e-5 , regularization = True, early_stopping = True):
        
         """
             self.lr : the learning rate for weights update during gradient descent
@@ -62,37 +62,33 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def fit(self, X, y=None):
-        
+
         prev_loss = np.inf
         self.losses_ = []
 
         self.nb_feature = X.shape[1]
         self.nb_classes = len(np.unique(y))
 
-        
+        tmp = np.ones((X.shape[0], 1))
+        X_bias = np.concatenate((tmp, X), axis=1)
+        self.theta_ = np.random.rand(self.nb_feature + 1, self.nb_classes)
 
-        tmp=np.ones((X.shape[0],1))
-        X_bias = np.concatenate((tmp,X),axis=1)
-        self.theta_=np.random.rand(self.nb_feature+1,self.nb_classes)
+        for epoch in range(self.n_epochs):
 
-        
+            # logits =
+            probabilities = self.predict_proba(X)
 
-        for epoch in range( self.n_epochs):
+            loss = self._cost_function(probabilities, y)
+            gradient = self._get_gradient(X, y, probabilities)
+            self.theta_ = self.theta_ - self.lr * gradient
 
-            #logits =
-            probabilities =self.predict_proba(X)
-            
-            
-            loss =  self._cost_function(probabilities,y)
-            gradient=self._get_gradient(X,y,probabilities)
-            self.theta_ = self.theta_-self.lr*gradient
-            
             self.losses_.append(loss)
 
             if self.early_stopping:
-                if epoch>1 and abs(self.losses_[epoch]-self.losses_[epoch-1])<self.threshold:
+                if epoch > 1 and abs(self.losses_[epoch] - self.losses_[epoch - 1]) < self.threshold:
                     break
         return self
+
 
     
 
@@ -204,17 +200,15 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     
     def _cost_function(self,probabilities, y ):
         m=probabilities.shape[0]
-        probabilities[np.where(probabilities<self.eps)]=self.eps
-        probabilities[np.where(probabilities>1-self.eps)] =1- self.eps
-        log_prob=np.exp(probabilities)
+        p_processed=np.clip(probabilities,self.eps,1-self.eps)
         cost_sum=0
         y_one_hot=self._one_hot(y)
         for i in range(m):
-            cost_sum+=np.dot(y_one_hot[i,:],probabilities[0,:].T)
+            c = np.argmax(y_one_hot[i,:]) # class
+            cost_sum += np.log(p_processed[i,c])
         if self.regularization:
             cost_sum=(-1/m)*cost_sum
-            raw_number=self.theta_.shape[0]
-            cost_sum+=(1/m)*self.alpha*np.sum(np.power(self.theta_[1:raw_number,:],2))
+            cost_sum+=(1/m)*self.alpha*np.sum(self.theta_[1:,:]**2)
             return cost_sum
         else:
             return (-1/m)*cost_sum

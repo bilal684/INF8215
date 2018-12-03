@@ -106,51 +106,84 @@ full_pipeline = ColumnTransformer(
 )
 
 columns = ["AgeuponOutcome", "AnimalType", "Neutered Male", "Spayed Female", "Intact Male", "Intact Female", "Unknown", "Mix"]
-#columns = ["AgeuponOutcome"]
-X_train = pd.DataFrame(full_pipeline.fit_transform(X_train), columns= columns)
-X_test = pd.DataFrame(full_pipeline.transform(X_test), columns= columns)
+X_train_prepared = pd.DataFrame(full_pipeline.fit_transform(X_train),columns = columns)
+X_test_prepared = pd.DataFrame(full_pipeline.fit_transform(X_test),columns = columns)
 
-X_train_all = pd.concat([X_train, X_train1], axis=1)
-X_test_all = pd.concat([X_test, X_test1], axis=1)
+X_train = pd.concat([X_train1,X_train_prepared], axis = 1)
+X_test = pd.concat([X_test1,X_test_prepared], axis = 1)
 
-
-
+from sklearn.preprocessing import LabelEncoder
 target_label = LabelEncoder()
 y_train_label = target_label.fit_transform(y_train)
 
 
+
+
+
 # cross-validation
 from sklearn.model_selection import KFold,StratifiedKFold,train_test_split
-from Draw_Charts import Draw_Charts
 from SoftmaxClassifier import SoftmaxClassifier
 from sklearn.metrics import precision_recall_fscore_support
 import matplotlib.pyplot as plt
-Draw_Charts(y_train_label,"Original Ratio")
-sfolder = StratifiedKFold(n_splits=10,random_state=0,shuffle=False)
 y_train_label=y_train_label.reshape((y_train_label.shape[0],1))
-X_train_all=X_train_all.values
 scores_list=[]
 #random sampling
-X_train, X_test, y_train, y_test = train_test_split( X_train_all, y_train_label, test_size=0.1, random_state=42)
+#X_train, X_test, y_train, y_test = train_test_split( X_train, y_train_label, test_size=0.1, random_state=42)
 #Draw_Charts(y_test,"Random Sampling")
-for train_index, test_index in sfolder.split(X_train_all, y_train_label):
-    print("TRAIN:", train_index, "TEST:", test_index)
-    X_cross_train=X_train_all[train_index]
-    y_cross_train=y_train_label[train_index]
-    X_cross_test=X_train_all[test_index]
-    y_cross_test=y_train_label[test_index]
+
+
+
+from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_validate
+
+def compare(models, X_train, y_train, nb_runs,scoring):
+    losses=[]
+    for m in models:
+        tmp_loss=cross_validate(m,X_train,y_train,cv=nb_runs,scoring=scoring)
+        losses.append(tmp_loss)
+    return losses
+
+nb_run = 3
+
+models = [
+
+    MLPClassifier(),
+    RandomForestClassifier(),
+    SoftmaxClassifier()
+
+]
+
+scoring = ['neg_log_loss', 'precision_macro','recall_macro','f1_macro']
+
+losses=compare(models,X_train,y_train_label,nb_run,scoring)
+idx=['test_neg_log_loss','test_precision_macro','test_recall_macro','test_f1_macro']
+for m in losses:
+    print("\n-------------------------\n")
+    for i in idx:
+        print ("The metric is "+ i+ "\n")
+        print (m[i])
+
+
+#for train_index, test_index in sfolder.split(X_train_all, y_train_label):
+#    print("TRAIN:", train_index, "TEST:", test_index)
+#    X_cross_train=X_train_all[train_index]
+#    y_cross_train=y_train_label[train_index]
+#    X_cross_test=X_train_all[test_index]
+#    y_cross_test=y_train_label[test_index]
 #    Draw_Charts(y_cross_test,"StratifiedKFold")
-    cl = SoftmaxClassifier()
-    train_p=cl.fit_predict(X_cross_train,y_cross_train)
-    scores = cl.score(X_cross_test,y_cross_test)
-    scores_list.append(scores)
-    print (scores)
+#    cl = SoftmaxClassifier()
+#    train_p=cl.fit_predict(X_cross_train,y_cross_train)
+#    scores = cl.score(X_cross_test,y_cross_test)
+#    scores_list.append(scores)
+#    print (scores)
   #  print("train : "+ str(precision_recall_fscore_support(y_cross_train, train_p,average = "macro")))
    # print("test : "+ str(precision_recall_fscore_support(y_cross_test, test_p,average = "macro")))
-    plt.plot(cl.losses_)
-    plt.show()
-    print("hello")
-plt.plot(scores_list)
+#    plt.plot(cl.losses_)
+#    plt.show()
+#    print("hello")
+#plt.plot(scores_list)
 
 
 
